@@ -199,3 +199,128 @@ for (i, element) in enumerate(my_array1)
 end
 print(my_array2)
 #%%
+
+a = [1,2,3]
+b = [4,5,6]
+
+a*b
+
+c = [4 5 6]
+
+d = a*c
+print(d)
+#Note a*b does not exist due to dimentions not aligned
+c*a
+e = reshape([1,2,3,4,5,6,7,8,9],3,3)
+g = e*a
+print(g)
+
+a .* c
+
+c .* a
+
+a .* e
+
+#%%
+
+a = [1,2,3]
+sin.(a)
+
+#%%
+
+function example1()
+    z = 42
+    return
+end
+
+function example2()
+    global z = 42
+    return
+end
+
+function example3()
+    z = 42
+    return z
+end
+
+a = let
+    i=3
+    i+=5
+    i
+end
+
+b = let i=5
+    i+=42
+    i
+end
+
+c = let i=10
+    i+=42
+    i
+end
+
+#note i is undefined as 'let' function contains the variable to local env
+#%%
+d = begin
+    i = 41
+    i+=1
+    i
+end
+#note i is defined in global using 'begin'
+#%%
+
+module ScopeTestModule
+export a1
+a1 = 25
+b1 = 42
+end
+
+using .ScopeTestModule
+#%%
+using Pkg
+Pkg.add("SpecialFunctions")
+
+using SpecialFunctions
+#ex. gamma(3) ,  sinint(5)
+#%%
+module MyModule
+export func2
+
+a=42
+function func1(x)
+    return x^2
+end
+
+function func2(x)
+return func1(x) + a
+end
+
+end
+#%%
+using .MyModule
+
+#%%
+
+include("big-module.jl")
+
+using .MyBigModule
+
+@doc raw"""
+    func2big(x)
+
+Computes the square of `x` and add `a` to it.
+
+# Examples
+​```julia-repl
+julia> include("big-module.jl")
+julia> using .MyBigModule
+julia> func2big(3)
+51
+​```
+"""
+function func2big(x)
+    return func1big(x) + a
+end
+
+#%%
+#Types and Structures
