@@ -11,39 +11,35 @@ print(my_name)
 #%%
 a = 2
 b = 3
- sum = a + b
- difference = a - b
- product = a * b
- quotient = b / a
- power = a^3
- modulus = b % a
- #%%
- typeof(0.1)
- typeof(42)
- typeof("Hello")
- #%%
- a = 2 # if we need to operate with ints
- b = 2.0 # if we need to operate with floats
- #%%
- convert(Float64, 2)
+sum = a + b
+difference = a - b
+product = a * b
+quotient = b / a
+power = a^3
+modulus = b % a
+#%%
+typeof(0.1)
+typeof(42)
+typeof("Hello")
+#%%
+a = 2 # if we need to operate with ints
+b = 2.0 # if we need to operate with floats
+#%%
+convert(Float64, 2)
 
- a = 2
- b = convert(Float64, a)
+a = 2
+b = convert(Float64, a)
 
- a
-
- b
-
- #%% Funcitons
- function plus_two(x)
-    #perform some operations
-    return x + 2
- end
- y = plus_two(1)
- print(y)
- #%%
- using Pkg
- Pkg.add("QuadGK")
+#%% Funcitons
+function plus_two(x)
+   #perform some operations
+   return x + 2
+end
+y = plus_two(1)
+print(y)
+#%%
+using Pkg
+Pkg.add("QuadGK")
 using QuadGK
 
 f(x,y,z) = (x^2 + 2y)*z
@@ -185,7 +181,7 @@ function while_test()
         i += 1
     end
 end
-while_test()
+#while_test()
 #%%
 x = ["a", "b", "c", "d"]
 for couple in enumerate(x)
@@ -202,8 +198,7 @@ print(my_array2)
 
 a = [1,2,3]
 b = [4,5,6]
-
-a*b
+#a*b
 
 c = [4 5 6]
 
@@ -215,17 +210,11 @@ e = reshape([1,2,3,4,5,6,7,8,9],3,3)
 g = e*a
 print(g)
 
-a .* c
-
-c .* a
-
-a .* e
-
+#a .* c, c .* a, a .* e
 #%%
 
 a = [1,2,3]
-sin.(a)
-
+#sin.(a)
 #%%
 
 function example1()
@@ -513,3 +502,150 @@ Pkg.add("ORCA")
 using ORCA
 
 savefig("img2.png")
+#%%
+using Pkg
+Pkg.add("QuadGK")
+using QuadGK
+
+func1(x) = exp(-x^2)
+res, err = quadgk(func1, -Inf, Inf)
+res, err = quadgk(func1, -Inf, Inf, rtol=1e-15)
+#abs(res-sqrt(pi))/sqrt(pi)
+res, err = quadgk(func1, -Inf, Inf, order=12)
+#
+func2(x, y, z) = x + y^3 + sin(z)
+x = 5
+z = 3
+arg(y) = func2(x, y, z)
+
+quadgk(arg, 1, 3)
+#%%alternatively
+quadgk(y -> func2(x, y, z), 1, 3)
+res, err = let x=5; z=3
+    arg(y) = func2(x, y, z)
+
+    quadgk(arg, 1, 3)
+end
+
+func3(x,y) = x^2*exp(y)
+
+function test_int(x, ymin, ymax)
+    arg(y) = func3(x, y)
+    return quadgk(arg, ymin, ymax)[1]
+end
+
+test_int(3,1,5)
+#%%
+using Pkg
+Pkg.add("PyCall")
+using PyCall
+#%%
+using Pkg
+
+ENV["PYTHON"] = "" 
+ENV["CONDA_JL_HOME"] = "/path/to/miniconda3" 
+
+Pkg.add("Conda")
+using Conda
+
+Pkg.add("PyCall")
+Pkg.build("PyCall")
+using PyCall
+#%%
+math = pyimport("math")
+#math.sin(3)
+using Pkg
+Pkg.add("PyPlot")
+
+using Plots
+pyplot()
+
+x=1:0.1:2*π
+y=sin.(x)
+plot(x, y, label="sin(x)")
+#%%
+using Pkg
+Pkg.add("Unitful")
+using Unitful
+one_meter = 1*u"m"
+b = uconvert(u"km", one_meter)
+#b , one_meter
+c = ustrip(u"m", one_meter)
+#c, typeof(c), one_meter, ustrip(u"km", one_meter), ustrip(one_meter)
+
+function compute_speed(Δx, Δt)
+    return Δx/Δt
+end
+
+#compute_speed(1u"km", 2u"s")
+function compute_speed(Δx::Unitful.Length, Δt::Unitful.Time)
+    return uconvert(u"m/s", Δx/Δt)
+end
+
+#compute_speed(1u"km", 2u"s")
+
+struct Person
+    height::typeof(1.0u"m")
+    mass::typeof(1.0u"kg")
+end
+
+using QuadGK
+velocity(t::Unitful.Time) = 2u"m/s^2"*t + 1u"m/s"
+
+#quadgk(velocity, 0u"s", 3u"s")[1]
+#%%
+using Pkg
+Pkg.add("JLD")
+using JLD
+
+x = collect(-3:0.1:3)
+y = collect(-3:0.1:3)
+
+xx = reshape([xi for xi in x for yj in y], length(y), length(x))
+yy = reshape([yj for xi in x for yj in y], length(y), length(x))
+                                
+z = sin.(xx .+ yy.^2)
+
+data_dict = Dict("x" => x, "y" => y, "z" => z)
+
+save("data_dict.jld", data_dict)
+
+data_dict2 = load("data_dict.jld")
+x2 = data_dict2["x"]
+y2 = data_dict2["y"]
+z2 = data_dict2["z"]
+
+using Plots
+plotly()
+
+plot(x2, y2, z2, st =:surface, color =:ice)
+#%%
+using JLD
+mutable struct Person1
+    height::Float64
+    weight::Float64
+end
+
+bob = Person1(1.84, 74)
+
+dict_new = Dict("bob" => bob)
+save("bob.jld", dict_new)
+
+using JLD
+mutable struct Person1
+    height::Float64
+    weight::Float64
+end
+bob2 = load("bob.jld")
+
+#bob2["bob"]
+#using JLD
+
+#>>>bob3 = load("bob.jld")
+#Warning: type Person not present in workspace; reconstructing
+    
+#>>>bob3["bob"]
+#JLD.var"##Person#402"(1.84, 74.0)
+    
+#>>>bob3["bob"].height
+#1.84
