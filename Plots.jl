@@ -2,10 +2,15 @@ import Pkg
 using Pkg
 Pkg.add("Pandas")
 Pkg.add("Plots")
+Pkg.add("Clustering")
 Pkg.add("StatsPlots")
 Pkg.add("DataFrames")
 Pkg.add("RDatasets")
-using Plots
+Pkg.add("PlotlyJS")
+Pkg.add("CSV")
+Pkg.add("HTTP")
+using Plots, CSV, HTTP, DataFrames
+using Clustering
 
 # Native Plotting
 #plot!(title = "New Title", xlabel = "New xlabel", ylabel = "New ylabel")
