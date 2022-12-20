@@ -1,0 +1,7 @@
+name = "TestPackage1"
+uuid = "a65b104d-7303-4bf7-9723-caf7d68b859e"
+authors = ["Sam Frantz <samueljfrantz@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
